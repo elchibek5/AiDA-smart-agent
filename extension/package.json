@@ -1,0 +1,36 @@
+{
+  "name": "aida-vscode",
+  "displayName": "AIDA – Dev Assistant",
+  "description": "Minimal chat for developers that streams from a local backend.",
+  "publisher": "you",
+  "version": "0.0.1",
+  "engines": { "vscode": "^1.70.0" },
+  "categories": ["Other"],
+  "activationEvents": ["onStartupFinished","onCommand:aida.chat.open"],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      { "command": "aida.chat.open", "title": "AIDA: Open Chat" }
+    ],
+    "configuration": {
+      "title": "AIDA",
+      "properties": {
+        "aida.backendUrl": {
+          "type": "string",
+          "default": "http://localhost:3001",
+          "description": "Backend base URL for AIDA (your Node server)."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p ./",
+    "watch": "tsc -w -p ./",
+    "vscode:prepublish": "npm run compile"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/vscode": "^1.89.0",
+    "typescript": "^5.4.0"
+  }
+}
