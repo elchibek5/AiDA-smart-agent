@@ -6,6 +6,13 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const app = express();
+
+import chat from './routes/chat.js';
+app.use(chat);
+
+import health from './routes/health.js';
+app.use(health);
+app.use(express.json({ limit: '1mb' }));
 app.use(cors());
 app.use(express.json({ limit: '2mb' }));
 app.use(morgan('dev'));

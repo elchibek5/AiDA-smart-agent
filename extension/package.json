@@ -4,13 +4,28 @@
   "description": "Minimal chat for developers that streams from a local backend.",
   "publisher": "you",
   "version": "0.0.1",
-  "engines": { "vscode": "^1.70.0" },
-  "categories": ["Other"],
-  "activationEvents": ["onStartupFinished","onCommand:aida.chat.open"],
+  "engines": {
+    "vscode": "^1.70.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished",
+    "onCommand:aida.chat.open",
+    "onCommand:aida.openChat"
+  ],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
-      { "command": "aida.chat.open", "title": "AIDA: Open Chat" }
+      {
+        "command": "aida.chat.open",
+        "title": "AIDA: Open Chat"
+      },
+      {
+        "command": "aida.openChat",
+        "title": "AIDA: Open Chat"
+      }
     ],
     "configuration": {
       "title": "AIDA",
