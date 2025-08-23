@@ -31,19 +31,16 @@ class AidaPanel {
     render() {
         const cfg = vscode.workspace.getConfiguration('aida');
         const backendUrl = cfg.get('backendUrl') ?? 'http://localhost:3001';
-        const html = this.getHtml(backendUrl);
-        this.panel.webview.html = html;
+        this.panel.webview.html = this.getHtml(backendUrl);
     }
     getHtml(backend) {
         const esc = (s) => s.replace(/"/g, '&quot;');
         const BACKEND = esc(backend);
         return /* html */ `<!DOCTYPE html>
-<html lang="en">
-<head>
+<html lang="en"><head>
 <meta charset="UTF-8" />
 <meta http-equiv="Content-Security-Policy"
-  content="default-src 'none'; img-src https: data:; style-src 'unsafe-inline';
-           script-src 'unsafe-inline'; connect-src ${BACKEND}; font-src data:;" />
+  content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; connect-src ${BACKEND}; img-src https: data:; font-src data:;" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>AIDA – Dev Assistant</title>
 <style>

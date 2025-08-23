@@ -1,0 +1,13 @@
+{
+  "name": "aida",
+  "private": true,
+  "workspaces": ["backend", "extension"],
+  "scripts": {
+    "dev:backend": "npm --workspace backend run dev",
+    "dev:ext:watch": "npm --workspace extension run watch",
+    "dev": "concurrently -n backend,ext \"npm run dev:backend\" \"npm run dev:ext:watch\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.0"
+  }
+}
