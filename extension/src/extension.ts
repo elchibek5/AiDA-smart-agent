@@ -13,6 +13,7 @@ class AidaPanel {
   public static current: AidaPanel | undefined;
   private panel: vscode.WebviewPanel;
 
+  
   private constructor(panel: vscode.WebviewPanel, private ctx: vscode.ExtensionContext) {
     this.panel = panel;
     this.render();
