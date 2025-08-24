@@ -1,0 +1,36 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <!-- {{csp}} will be replaced by webview.cspSource from extension code -->
+    <meta http-equiv="Content-Security-Policy" content="
+      default-src 'none';
+      img-src {{csp}} https:;
+      script-src {{csp}};
+      style-src {{csp}} 'unsafe-inline';
+      connect-src http://localhost:3001 https: http: data: {{csp}};
+    ">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AIDA Debug Panel</title>
+  </head>
+  <body>
+    <button id="send">Send</button>
+    <pre id="out"></pre>
+    <script>
+      const out = document.getElementById('out');
+      document.getElementById('send').addEventListener('click', async () => {
+        try {
+          const r = await fetch('http://localhost:3001/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: 'hello from webview' })
+          });
+          const j = await r.json();
+          out.textContent = JSON.stringify(j, null, 2);
+        } catch (e) {
+          out.textContent = 'ERROR: ' + (e && e.message);
+        }
+      });
+    </script>
+  </body>
+</html>

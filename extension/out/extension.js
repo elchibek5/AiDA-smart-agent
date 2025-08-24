@@ -36,10 +36,17 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.activate = activate;
 exports.deactivate = deactivate;
 const vscode = __importStar(require("vscode"));
-const ChatPanel_1 = require("./panels/ChatPanel");
+const fs = __importStar(require("fs"));
+const path = __importStar(require("path"));
+const panelHtml_1 = require("./panelHtml");
 function activate(context) {
-    const cmd = vscode.commands.registerCommand('aida.openChat', () => ChatPanel_1.ChatPanel.show(context));
-    context.subscriptions.push(cmd);
+    const disposable = vscode.commands.registerCommand('aida.openChat', () => {
+        const panel = vscode.window.createWebviewPanel('aidaPanel', 'AIDA Chat', vscode.ViewColumn.One, { enableScripts: true, retainContextWhenHidden: true });
+        const htmlPath = path.join(context.extensionPath, 'media', 'index.html');
+        const raw = fs.readFileSync(htmlPath, 'utf8');
+        panel.webview.html = (0, panelHtml_1.withCsp)(raw, panel.webview);
+    });
+    context.subscriptions.push(disposable);
 }
 function deactivate() { }
 //# sourceMappingURL=extension.js.map

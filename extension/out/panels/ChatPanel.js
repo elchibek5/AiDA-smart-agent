@@ -35,6 +35,13 @@ var __importStar = (this && this.__importStar) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ChatPanel = void 0;
 const vscode = __importStar(require("vscode"));
+function makeNonce(len = 32) {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
+    let s = '';
+    for (let i = 0; i < len; i++)
+        s += chars.charAt(Math.floor(Math.random() * chars.length));
+    return s; // base64-like, safe for CSP nonces
+}
 class ChatPanel {
     constructor(panel, extUri) {
         this.disposables = [];
@@ -66,37 +73,41 @@ class ChatPanel {
         this.panel.dispose();
     }
     getHtml(webview, _extUri, backendUrl) {
-        const nonce = `${Date.now()}-${Math.random()}`;
+        const nonce = makeNonce();
+        // Note: VS Code requires a valid nonce string in both CSP and the <script> tag.
+        // Also allow connect-src http/https for backend calls.
         return /* html */ `<!doctype html>
 <html>
 <head>
-<meta charset="UTF-8" />
-<meta http-equiv="Content-Security-Policy"
-  content="default-src 'none';
-           img-src ${webview.cspSource} https:;
-           style-src 'unsafe-inline' ${webview.cspSource};
-           script-src 'nonce-${nonce}';
-           connect-src http: https:;" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>AIDA Chat</title>
-<style>
-  :root { --bg:#0b0f14; --panel:#121821; --muted:#94a3b8; --line:#1f2937; }
-  * { box-sizing: border-box; }
-  html, body { height:100%; background:var(--bg); color:#e5e7eb; }
-  body { margin:0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif; overflow:hidden; }
-  .wrap { display:flex; flex-direction:column; height:100vh; }
-  .top { padding:10px 14px; border-bottom:1px solid var(--line); background:var(--panel); }
-  .muted { color:var(--muted); font-size:12px; }
-  .log { flex:1; overflow:auto; padding:14px; }
-  .bubble { max-width:80%; padding:10px 12px; border-radius:14px; margin:8px 0; line-height:1.5; white-space:pre-wrap; word-break:break-word; }
-  .you { background:#0f172a; border:1px solid #334155; align-self:flex-end; }
-  .bot { background:#0a1f16; border:1px solid #1e3a34; }
-  .row { display:flex; gap:10px; padding:12px; border-top:1px solid var(--line); background:var(--panel); }
-  input { flex:1; padding:10px 12px; border-radius:10px; border:1px solid #334155; background:#0b1220; color:inherit; outline:none; }
-  button { padding:10px 14px; border-radius:10px; border:1px solid #334155; background:#0b1220; color:inherit; cursor:pointer; }
-  button:disabled { opacity:.6; cursor:not-allowed; }
-  .status { padding:8px 12px; border-top:1px solid var(--line); background:#0b1220; font-size:12px; color:#94a3b8; }
-</style>
+  <meta charset="UTF-8" />
+  <meta http-equiv="Content-Security-Policy"
+        content="
+          default-src 'none';
+          img-src ${webview.cspSource} https: data:;
+          style-src 'unsafe-inline' ${webview.cspSource};
+          script-src 'nonce-${nonce}';
+          connect-src http: https:;
+        " />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AIDA Chat</title>
+  <style>
+    :root { --bg:#0b0f14; --panel:#121821; --muted:#94a3b8; --line:#1f2937; }
+    * { box-sizing: border-box; }
+    html, body { height:100%; background:var(--bg); color:#e5e7eb; }
+    body { margin:0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif; overflow:hidden; }
+    .wrap { display:flex; flex-direction:column; height:100vh; }
+    .top { padding:10px 14px; border-bottom:1px solid var(--line); background:var(--panel); }
+    .muted { color:var(--muted); font-size:12px; }
+    .log { flex:1; overflow:auto; padding:14px; }
+    .bubble { max-width:80%; padding:10px 12px; border-radius:14px; margin:8px 0; line-height:1.5; white-space:pre-wrap; word-break:break-word; }
+    .you { background:#0f172a; border:1px solid #334155; align-self:flex-end; }
+    .bot { background:#0a1f16; border:1px solid #1e3a34; }
+    .row { display:flex; gap:10px; padding:12px; border-top:1px solid var(--line); background:var(--panel); }
+    input { flex:1; padding:10px 12px; border-radius:10px; border:1px solid #334155; background:#0b1220; color:inherit; outline:none; }
+    button { padding:10px 14px; border-radius:10px; border:1px solid #334155; background:#0b1220; color:inherit; cursor:pointer; }
+    button:disabled { opacity:.6; cursor:not-allowed; }
+    .status { padding:8px 12px; border-top:1px solid var(--line); background:#0b1220; font-size:12px; color:#94a3b8; }
+  </style>
 </head>
 <body>
   <div class="wrap">

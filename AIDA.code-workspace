@@ -1,5 +1,14 @@
 {
   "folders": [
+    { "name": "extension", "path": "extension" },
+    { "name": "backend", "path": "backend" }
+  ],
+  "settings": {
+    "typescript.tsdk": "extension/node_modules/typescript/lib"
+  }
+}
+{
+  "folders": [
     { "name": "backend",   "path": "backend" },
     { "name": "extension", "path": "extension" }
   ]
