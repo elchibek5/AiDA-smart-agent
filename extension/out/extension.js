@@ -39,14 +39,20 @@ const vscode = __importStar(require("vscode"));
 const fs = __importStar(require("fs"));
 const path = __importStar(require("path"));
 const panelHtml_1 = require("./panelHtml");
+const nonce_1 = require("./nonce");
 function activate(context) {
-    const disposable = vscode.commands.registerCommand('aida.openChat', () => {
-        const panel = vscode.window.createWebviewPanel('aidaPanel', 'AIDA Chat', vscode.ViewColumn.One, { enableScripts: true, retainContextWhenHidden: true });
+    const open = vscode.commands.registerCommand('aida.openChat', () => {
+        const panel = vscode.window.createWebviewPanel('aidaPanel', 'AIDA Chat', vscode.ViewColumn.One, {
+            enableScripts: true,
+            retainContextWhenHidden: true,
+            localResourceRoots: [vscode.Uri.file(path.join(context.extensionPath, 'media'))]
+        });
         const htmlPath = path.join(context.extensionPath, 'media', 'index.html');
         const raw = fs.readFileSync(htmlPath, 'utf8');
-        panel.webview.html = (0, panelHtml_1.withCsp)(raw, panel.webview);
+        const nonce = (0, nonce_1.getNonce)();
+        panel.webview.html = (0, panelHtml_1.withCspAndNonce)(raw, panel.webview, nonce);
     });
-    context.subscriptions.push(disposable);
+    context.subscriptions.push(open);
 }
 function deactivate() { }
 //# sourceMappingURL=extension.js.map

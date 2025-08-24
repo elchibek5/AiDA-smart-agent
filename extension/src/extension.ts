@@ -1,22 +1,29 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
-import { withCsp } from './panelHtml';
+import { withCspAndNonce } from './panelHtml';
+import { getNonce } from './nonce';
 
 export function activate(context: vscode.ExtensionContext) {
-  const disposable = vscode.commands.registerCommand('aida.openChat', () => {
+  const open = vscode.commands.registerCommand('aida.openChat', () => {
     const panel = vscode.window.createWebviewPanel(
       'aidaPanel',
       'AIDA Chat',
       vscode.ViewColumn.One,
-      { enableScripts: true, retainContextWhenHidden: true }
+      {
+        enableScripts: true,
+        retainContextWhenHidden: true,
+        localResourceRoots: [vscode.Uri.file(path.join(context.extensionPath, 'media'))]
+      }
     );
+
     const htmlPath = path.join(context.extensionPath, 'media', 'index.html');
     const raw = fs.readFileSync(htmlPath, 'utf8');
-    panel.webview.html = withCsp(raw, panel.webview);
+    const nonce = getNonce();
+    panel.webview.html = withCspAndNonce(raw, panel.webview, nonce);
   });
 
-  context.subscriptions.push(disposable);
+  context.subscriptions.push(open);
 }
 
 export function deactivate() {}

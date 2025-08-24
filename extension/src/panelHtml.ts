@@ -1,4 +1,7 @@
 import type { Webview } from 'vscode';
-export function withCsp(html: string, webview: Webview) {
-  return html.replace(/\{\{csp\}\}/g, webview.cspSource);
+
+export function withCspAndNonce(html: string, webview: Webview, nonce: string) {
+  return html
+    .replace(/\{\{csp\}\}/g, webview.cspSource)
+    .replace(/\{\{nonce\}\}/g, nonce);
 }
